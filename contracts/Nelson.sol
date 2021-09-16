@@ -10,7 +10,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
  
 
-contract NMToken is ERC721URIStorage, ERC721Enumerable, ERC721Burnable, Ownable {
+contract NMToken is ERC721URIStorage, ERC721Enumerable,  Ownable {
     using Counters for Counters.Counter;
     using Address for address payable; 
     struct Nft {
@@ -36,15 +36,6 @@ contract NMToken is ERC721URIStorage, ERC721Enumerable, ERC721Burnable, Ownable 
    
 
 
-/// @dev This function allow to destroy (burn) a NFT
-
-   function _burn(uint256 tokenId)
-        internal
-        virtual
-        override (ERC721, ERC721URIStorage)
-    {
-        super._burn(tokenId);
-    }
     /// @dev creation of NFT
     /// @dev this function allow to create nft, 
     /// @dev increment balance[owner], number of id, and total supply.
@@ -59,7 +50,7 @@ contract NMToken is ERC721URIStorage, ERC721Enumerable, ERC721Burnable, Ownable 
         public onlyOwner
         returns (uint256)
     {  
-        //require(_cprId[textHashed] == 0, "NMToken: sorry this content is already create");
+       
         uint256 newNft = _nftId.current();
         _mint(msg.sender, newNft);
         
@@ -134,4 +125,16 @@ contract NMToken is ERC721URIStorage, ERC721Enumerable, ERC721Burnable, Ownable 
         internal virtual override (ERC721, ERC721Enumerable)  {
         super._beforeTokenTransfer(from, to, tokenId);
     }
+
+
+/// @dev This function allow to destroy (burn) a NFT
+
+   function _burn(uint256 tokenId)
+        internal
+        virtual
+        override (ERC721, ERC721URIStorage)
+    {
+        super._burn(tokenId);
+    }
+
 }

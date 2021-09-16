@@ -76,8 +76,8 @@
       ]
     },
     "/Users/calimero92/hard_nel/contracts/Nelson.sol": {
-      "lastModificationDate": 1631587819574,
-      "contentHash": "f695512bd7c57b1a885950e30054711a",
+      "lastModificationDate": 1631764713600,
+      "contentHash": "240be6f6e13ac4314a62c76e97d25918",
       "sourceName": "contracts/Nelson.sol",
       "solcConfig": {
         "version": "0.8.4",

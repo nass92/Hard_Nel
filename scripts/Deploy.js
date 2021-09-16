@@ -1,5 +1,5 @@
 const hre = require('hardhat');
-
+const { deployed } = require('./deployed');
 
 async function main() {
   // Hardhat always runs the compile task when running scripts with its command
@@ -14,7 +14,7 @@ async function main() {
   console.log('Deploying contracts with the account:', deployer.address);
 
   // We get the contract to deploy
-  const Nm = await hre.ethers.getContractFactory('NelsonNakamo');
+  const Nm = await hre.ethers.getContractFactory('NMToken');
   const nm = await Nm.deploy();
 
   // Attendre que le contrat soit réellement déployé, cad que la transaction de déploiement
@@ -23,7 +23,7 @@ async function main() {
   console.log(nm.interface.functions);
 
   // Create/update deployed.json and print usefull information on the console.
-  await deployed('NelsonMakamo', hre.network.name, nm.address);
+  await deployed('NMToken', hre.network.name, nm.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
