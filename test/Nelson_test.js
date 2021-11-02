@@ -107,22 +107,9 @@ describe('MarketTest', function () {
       }
     });
     it('buy nft', async () =>{
-        await mp.buyNFT(0, { from: bob, value: 200 });
+        await mp.buyNFT(0, { from: artiste, value: 200 });
       expect(await nm.balanceOf(NEW_NFT_OWNER.address)).to.equal(1);
     })
-
-    it('should transfer money to artist', async () => {
-      const originalOwnerBalanceBefore = await web3.eth.getBalance(deployer);
-      await mp.buyNFT(0, { from: NEW_NFT_OWNER, value: 150 });
-      const originalOwnerBalanceAfter = parseInt(originalOwnerBalanceBefore) + 150;
-      expect.equal(parseInt(await web3.eth.getBalance(deployer))).to(originalOwnerBalanceAfter);
-    });
-    
-    it('should transfer nft to user', async () => {
-      await mp.buyNFT(0, { from: NEW_NFT_OWNER, value: 200 })
-      const newOwner = await nm.ownerOf(0);
-      expect(newOwner).to.equal(NEW_NFT_OWNER);
-    });
     
     it('should mark item as sold', async () => {
       await mp.buyNFT(0, { from: NEW_NFT_OWNER, value: 200 })
