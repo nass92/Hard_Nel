@@ -1,6 +1,7 @@
 const { ethers } = require('hardhat');
 const { expect } = require('chai');
-
+const { parseEther } = require('@ethersproject/units');
+const {web3} = require('web3');
 describe('NelsonTest', function () {
   let deployer, artiste, Nm, nm;
 
@@ -23,18 +24,18 @@ describe('NelsonTest', function () {
 
     it('Should increase the balance of the author', async function () {
       await nm.connect(deployer).certify('0x4b0e2df202b433cb39d49fe68ebc16734426f4993fdc74b296464191fd51bdb9',
-        'ewe', 'rara', 'ipfs.io/ipfs/QmaKPJRAPf9fij2epXWLuQrMGPVWEbK4Fv7RDLwGZcFS3N', 'artist');
+        'ewe', 'rara', 'ipfs.io/ipfs/QmaKPJRAPf9fij2epXWLuQrMGPVWEbK4Fv7RDLwGZcFS3N', 'artist', true, 100);
       expect(await nm.balanceOf(deployer.address)).to.equal(1);
     });
     it('Should have the right owner', async function () {
       await nm.connect(deployer).certify('0x4b0e2df202b433cb39d49fe68ebc16734426f4993fdc74b296464191fd51bdb9',
-        'ewe', 'rara', 'ipfs.io/ipfs/QmaKPJRAPf9fij2epXWLuQrMGPVWEbK4Fv7RDLwGZcFS3N', 'artist');
+        'ewe', 'rara', 'ipfs.io/ipfs/QmaKPJRAPf9fij2epXWLuQrMGPVWEbK4Fv7RDLwGZcFS3N', 'artist', true, 100);
       expect(await nm.ownerOf(0)).to.equal(deployer.address);
     });
 
     it('should have the right URI', async function () {
       await nm.connect(deployer).certify('0x4b0e2df202b433cb39d49fe68ebc16734426f4993fdc74b296464191fd51bdb9',
-        'ewe', 'rara', 'ipfs.io/ipfs/QmaKPJRAPf9fij2epXWLuQrMGPVWEbK4Fv7RDLwGZcFS3N', 'artist');
+        'ewe', 'rara', 'ipfs.io/ipfs/QmaKPJRAPf9fij2epXWLuQrMGPVWEbK4Fv7RDLwGZcFS3N', 'artist', true, 100);
       expect(await nm.tokenURI(0)).to.equal('ipfs.io/ipfs/QmaKPJRAPf9fij2epXWLuQrMGPVWEbK4Fv7RDLwGZcFS3N');
     });
   });
@@ -42,7 +43,7 @@ describe('NelsonTest', function () {
   describe('checkin', async () => {
     beforeEach(async function () {
       await nm.connect(deployer).certify('0x4b0e2df202b433cb39d49fe68ebc16734426f4993fdc74b296464191fd51bdb9',
-        'ewe', 'rara', 'ipfs.io/ipfs/QmaKPJRAPf9fij2epXWLuQrMGPVWEbK4Fv7RDLwGZcFS3N', 'artist');
+        'ewe', 'rara', 'ipfs.io/ipfs/QmaKPJRAPf9fij2epXWLuQrMGPVWEbK4Fv7RDLwGZcFS3N', 'artist', true, 100);
     });
     it('Should find the right NFT with his ID', async function () {
       const nft = await nm.connect(deployer).getNMById(0);
@@ -50,7 +51,7 @@ describe('NelsonTest', function () {
     });
     it('Should find the right ID with the hash of the content NFT', async function () {
       await nm.connect(deployer).certify('0x4b0e2df202b433cb39d49fe68ebc16734426f4993fdc74b296464191fd51bdb9',
-        'ewe', 'rara', 'ipfs.io/ipfs/QmaKPJRAPf9fij2epXWLuQrMGPVWEbK4Fv7RDLwGZcFS3N', 'artist');
+        'ewe', 'rara', 'ipfs.io/ipfs/QmaKPJRAPf9fij2epXWLuQrMGPVWEbK4Fv7RDLwGZcFS3N', 'artist', true, 100);
       
       expect(await nm.connect(deployer).getNMByHash('0x4b0e2df202b433cb39d49fe68ebc16734426f4993fdc74b296464191fd51bdb9')).to.equal(0);
     });
@@ -58,7 +59,7 @@ describe('NelsonTest', function () {
   describe('getNMById', async () => {
     beforeEach(async function () {
       await nm.connect(deployer).certify('0x4b0e2df202b433cb39d49fe68ebc16734426f4993fdc74b296464191fd51bdb9',
-        'ewe', 'rara', 'ipfs.io/ipfs/QmaKPJRAPf9fij2epXWLuQrMGPVWEbK4Fv7RDLwGZcFS3N', 'artist');
+        'ewe', 'rara', 'ipfs.io/ipfs/QmaKPJRAPf9fij2epXWLuQrMGPVWEbK4Fv7RDLwGZcFS3N', 'artist', true, 100);
     });
 
     it('Should return the NFT assossiated with the id', async function () {
@@ -72,3 +73,62 @@ describe('NelsonTest', function () {
   });
 
 });
+
+describe('MarketTest', function () {
+  
+
+  let MP, mp, deployer, NEW_NFT_OWNER , bob;
+
+
+  before(async () => {
+    [, deployer, artiste, NEW_NFT_OWNER] = await ethers.getSigners();
+    MarketPlace = await ethers.getContractFactory('MarketPlace');
+    mp = await MarketPlace.connect(deployer).deploy()
+    await mp.deployed();
+    Nm = await ethers.getContractFactory('NMToken');
+    nm = await Nm.connect(deployer).deploy();
+    await nm.deployed();
+
+    await mp.connect(deployer).setNftAddress(nm.connect(deployer).address);
+    
+    
+    await nm.connect(deployer).certify('0x4b0e2df202b433cb39d49fe68ebc16734426f4993fdc74b296464191fd51bdb9',
+        'ewe', 'rara', 'ipfs.io/ipfs/QmaKPJRAPf9fij2epXWLuQrMGPVWEbK4Fv7RDLwGZcFS3N','artist', true, 100);
+       
+  });
+
+  describe('buyNft', () => {
+    it('should not allow sale if price is not met', async () => {
+      try {
+        await mp.buyNFT(0, { from: NEW_NFT_OWNER, value: 200 });
+        expect(false);
+      } catch (error) {
+        expect(error);
+      }
+    });
+    it('buy nft', async () =>{
+        await mp.buyNFT(0, { from: bob, value: 200 });
+      expect(await nm.balanceOf(NEW_NFT_OWNER.address)).to.equal(1);
+    })
+
+    it('should transfer money to artist', async () => {
+      const originalOwnerBalanceBefore = await web3.eth.getBalance(deployer);
+      await mp.buyNFT(0, { from: NEW_NFT_OWNER, value: 150 });
+      const originalOwnerBalanceAfter = parseInt(originalOwnerBalanceBefore) + 150;
+      expect.equal(parseInt(await web3.eth.getBalance(deployer))).to(originalOwnerBalanceAfter);
+    });
+    
+    it('should transfer nft to user', async () => {
+      await mp.buyNFT(0, { from: NEW_NFT_OWNER, value: 200 })
+      const newOwner = await nm.ownerOf(0);
+      expect(newOwner).to.equal(NEW_NFT_OWNER);
+    });
+    
+    it('should mark item as sold', async () => {
+      await mp.buyNFT(0, { from: NEW_NFT_OWNER, value: 200 })
+      const nftSale = await nm._listed(0);
+      expect(nftSale.isForSale).to.equal(false);
+    });    
+  });
+});
+

@@ -13,16 +13,20 @@ import "@openzeppelin/contracts/utils/Address.sol";
 contract NMToken is ERC721URIStorage, ERC721Enumerable,  Ownable {
     using Counters for Counters.Counter;
     using Address for address payable; 
+   
     struct Nft {
         string textHashed;
         string txt;
         string title;
         string url;
         string artist;
+        bool isForSale;
+        uint256 price;
     }
 
     
-    Counters.Counter private _nftId;
+    Counters.Counter private _tokenId;
+    Nft[] public _listed;
 
     mapping(uint256 => Nft) private _nft;
     mapping(uint256 => address) private _flw;
@@ -46,12 +50,14 @@ contract NMToken is ERC721URIStorage, ERC721Enumerable,  Ownable {
         string memory txt,
          string memory title,
         string memory url,
-        string memory artist)
+        string memory artist,
+        bool isForSale,
+         uint256 price)
         public onlyOwner
         returns (uint256)
     {  
        
-        uint256 newNft = _nftId.current();
+        uint256 newNft = _tokenId.current();
         _mint(msg.sender, newNft);
         
         _nft[newNft]= Nft({
@@ -59,11 +65,15 @@ contract NMToken is ERC721URIStorage, ERC721Enumerable,  Ownable {
             txt: txt,
             title: title,
             url : url,
-            artist : artist
+            artist : artist,
+            isForSale: isForSale,
+            price: price
         });
-        _nftId.increment();
         _setTokenURI(newNft, url);
-        //_cprId[NonFungibleToken.textHashed] = newNft;
+        Nft memory sale = Nft(textHashed,txt,title,url, artist, true, price);
+        _listed.push(sale);
+         _cprId[url] = newNft;
+         _tokenId.increment();
         return newNft;
     }
 
@@ -80,16 +90,20 @@ contract NMToken is ERC721URIStorage, ERC721Enumerable,  Ownable {
     }
 
 
+  function getPrice(uint256 tokenId) external view returns (uint) {
+    Nft storage nftForSale = _listed[tokenId];
+    return nftForSale.price;
+  }
 
-    function listNFT(address marketPlace, uint256 id, uint256 price_) public onlyOwner {
-        approve(marketPlace, id);
-        _price[id] = price_;
-    }
+  function listNFT(uint256 tokenId) public {
+    Nft storage nftForSale = _listed[tokenId];
+    nftForSale.isForSale = false;
+  }
 
-
-    function getPrice(uint256 id) public view returns (uint256) {
-        return (_price[id]);
-    }
+function markAsSold(uint256 tokenId) public {
+    Nft storage nftForSale = _listed[tokenId];
+    nftForSale.isForSale = false;
+  }
 
     function tokenURI(uint256 tokenId)
         public
