@@ -112,7 +112,7 @@ describe('MarketTest', function () {
     })
     
     it('should mark item as sold', async () => {
-      await mp.buyNFT(0, { from: NEW_NFT_OWNER, value: 200 })
+      await nm.listNFT(0)
       const nftSale = await nm._listed(0);
       expect(nftSale.isForSale).to.equal(false);
     });    
