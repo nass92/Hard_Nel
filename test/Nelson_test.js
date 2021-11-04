@@ -94,6 +94,8 @@ describe('MarketTest', function () {
     
     await nm.connect(deployer).certify('0x4b0e2df202b433cb39d49fe68ebc16734426f4993fdc74b296464191fd51bdb9',
         'ewe', 'rara', 'ipfs.io/ipfs/QmaKPJRAPf9fij2epXWLuQrMGPVWEbK4Fv7RDLwGZcFS3N','artist', true, 100);
+        await nm.connect(deployer).certify('0x4b0e2df202b433cb39d49fe68ebc16734426f4993fdc74b296464191fd51bdb9',
+        'ewer', 'rarar', 'ipfs.io/ipfs/QmaKPJRAPf9fij2epXWLuQrMGPVWEbK4Fv7RDLwGZcFS4N','artist', true, 100);
        
   });
 
@@ -107,8 +109,8 @@ describe('MarketTest', function () {
       }
     });
     it('buy nft', async () =>{
-        await mp.buyNFT(0, { from: artiste, value: 200 });
-      expect(await nm.balanceOf(NEW_NFT_OWNER.address)).to.equal(1);
+        await mp.connect(deployer).buyNFT(0, { from: artiste, value: 200 });
+      expect(await nm.balanceOf(artiste)).to.equal(1);
     })
     
     it('should mark item as sold', async () => {
