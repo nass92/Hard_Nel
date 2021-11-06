@@ -11,9 +11,10 @@ contract MarketPlace {
 
     mapping(address => uint256) private _etherBalance;
     
-       function setNftAddress(NMToken instanceAddress) public {
-    _nmtoken = instanceAddress;
-  }
+     
+    constructor(address nftAddress_) {
+        _nmtoken = NMToken(nftAddress_);
+    }
 
     function buyNFT(uint256 tokenId) public payable {
         uint salePrice = _nmtoken.getPrice(tokenId);

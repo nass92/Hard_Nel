@@ -1,10 +1,8 @@
 // SPDX-License-Identifier: MIT
-
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol"; 
 import "@openzeppelin/contracts/utils/Address.sol";
@@ -21,12 +19,11 @@ contract NMToken is ERC721URIStorage, ERC721Enumerable,  Ownable {
         string url;
         string artist;
         bool isForSale;
-        uint256 price;
     }
 
     
     Counters.Counter private _tokenId;
-    Nft[] public _listed;
+    Nft[] public list;
 
     mapping(uint256 => Nft) private _nft;
     mapping(uint256 => address) private _flw;
@@ -51,8 +48,7 @@ contract NMToken is ERC721URIStorage, ERC721Enumerable,  Ownable {
          string memory title,
         string memory url,
         string memory artist,
-        bool isForSale,
-         uint256 price)
+        bool isForSale, uint256 price_)
         public onlyOwner
         returns (uint256)
     {  
@@ -66,12 +62,14 @@ contract NMToken is ERC721URIStorage, ERC721Enumerable,  Ownable {
             title: title,
             url : url,
             artist : artist,
-            isForSale: isForSale,
-            price: price
+            isForSale: isForSale
         });
         _setTokenURI(newNft, url);
-        Nft memory sale = Nft(textHashed,txt,title,url, artist, true, price);
-        _listed.push(sale);
+        Nft memory sale = Nft(textHashed,txt,title,url, artist, isForSale);
+        if(sale.isForSale == true){
+            _price[newNft] = price_;
+            list.push(sale);
+        }
          _cprId[url] = newNft;
          _tokenId.increment();
         return newNft;
@@ -91,17 +89,16 @@ contract NMToken is ERC721URIStorage, ERC721Enumerable,  Ownable {
 
 
   function getPrice(uint256 tokenId) external view returns (uint) {
-    Nft storage nftForSale = _listed[tokenId];
-    return nftForSale.price;
+   return (_price[tokenId]);
   }
 
   function listNFT(uint256 tokenId) public {
-    Nft storage nftForSale = _listed[tokenId];
-    nftForSale.isForSale = false;
+    Nft storage nftForSale = list[tokenId];
+    nftForSale.isForSale = true;
   }
 
 function markAsSold(uint256 tokenId) public {
-    Nft storage nftForSale = _listed[tokenId];
+    Nft storage nftForSale = list[tokenId];
     nftForSale.isForSale = false;
   }
 

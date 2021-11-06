@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/calimero92/hard_nel/contracts/MarketPlace.sol": {
-      "lastModificationDate": 1635784987880,
-      "contentHash": "6dc806cf95a12183832060475f2c89b3",
+      "lastModificationDate": 1636128763558,
+      "contentHash": "177ca3e2dd339b3df056a556568baed5",
       "sourceName": "contracts/MarketPlace.sol",
       "solcConfig": {
         "version": "0.8.0",
@@ -77,8 +77,8 @@
       ]
     },
     "/Users/calimero92/hard_nel/contracts/Nelson.sol": {
-      "lastModificationDate": 1635778073984,
-      "contentHash": "009a9f6e558f35a7424498c57c94426e",
+      "lastModificationDate": 1636128769622,
+      "contentHash": "4ef3d35af71d1ac0cd6640f84511888f",
       "sourceName": "contracts/Nelson.sol",
       "solcConfig": {
         "version": "0.8.0",
@@ -107,7 +107,6 @@
       "imports": [
         "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol",
         "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol",
-        "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
         "@openzeppelin/contracts/utils/Counters.sol",
         "@openzeppelin/contracts/access/Ownable.sol",
         "@openzeppelin/contracts/utils/Address.sol"
@@ -194,45 +193,6 @@
       ],
       "artifacts": [
         "ERC721Enumerable"
-      ]
-    },
-    "/Users/calimero92/hard_nel/node_modules/@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol": {
-      "lastModificationDate": 1631587813867,
-      "contentHash": "c451d6197061b5e0d446b7171af0dc01",
-      "sourceName": "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
-      "solcConfig": {
-        "version": "0.8.0",
-        "settings": {
-          "optimizer": {
-            "enabled": false,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "devdoc",
-                "userdoc"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "../ERC721.sol",
-        "../../../utils/Context.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "ERC721Burnable"
       ]
     },
     "/Users/calimero92/hard_nel/node_modules/@openzeppelin/contracts/utils/Counters.sol": {

@@ -82,14 +82,13 @@ describe('MarketTest', function () {
 
   before(async () => {
     [, deployer, artiste, NEW_NFT_OWNER] = await ethers.getSigners();
-    MarketPlace = await ethers.getContractFactory('MarketPlace');
-    mp = await MarketPlace.connect(deployer).deploy()
-    await mp.deployed();
+    
     Nm = await ethers.getContractFactory('NMToken');
     nm = await Nm.connect(deployer).deploy();
     await nm.deployed();
-
-    await mp.connect(deployer).setNftAddress(nm.connect(deployer).address);
+    MarketPlace = await ethers.getContractFactory('MarketPlace');
+    mp = await MarketPlace.connect(deployer).deploy(nm.address)
+    await mp.deployed();
     
     
     await nm.connect(deployer).certify('0x4b0e2df202b433cb39d49fe68ebc16734426f4993fdc74b296464191fd51bdb9',
@@ -109,14 +108,14 @@ describe('MarketTest', function () {
       }
     });
     it('buy nft', async () =>{
-        await mp.connect(deployer).buyNFT(0, { from: artiste, value: 200 });
-      expect(await nm.balanceOf(artiste)).to.equal(1);
+        await mp.connect(deployer).buyNFT(0, { value: 200 });
+      expect(await nm.balanceOf(artiste.address)).to.equal(1);
     })
     
     it('should mark item as sold', async () => {
       await nm.listNFT(0)
-      const nftSale = await nm._listed(0);
-      expect(nftSale.isForSale).to.equal(false);
+      const nftSale = await nm.list(0);
+      expect(nftSale.isForSale).to.equal(true);
     });    
   });
 });
