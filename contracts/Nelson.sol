@@ -6,25 +6,25 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol"; 
 import "@openzeppelin/contracts/utils/Address.sol";
- 
+ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
-contract NMToken is ERC721URIStorage, ERC721Enumerable,  Ownable {
+contract NMToken is ERC721, ERC721URIStorage, ERC721Enumerable,  Ownable {
     using Counters for Counters.Counter;
     using Address for address payable; 
    
-    struct Nft {
-        string textHashed;
-        string txt;
-        string title;
-        string url;
-        string artist;
-        bool isForSale;
-    }
-
-    
-    Counters.Counter private _tokenId;
+ Counters.Counter private _tokenId;
     Nft[] public list;
 
+    struct Nft {
+        address authore;
+        uint8 royalties;
+        string title;
+        string author;
+       string  description;
+       uint256 timestamp;
+       bool forSell;
+    }
+   
     mapping(uint256 => Nft) private _nft;
     mapping(uint256 => address) private _flw;
     mapping(string => uint256) private _cprId;
@@ -42,40 +42,57 @@ contract NMToken is ERC721URIStorage, ERC721Enumerable,  Ownable {
     /// @dev increment balance[owner], number of id, and total supply.
     
     function certify(
-
-        string memory textHashed,
-        string memory txt,
-         string memory title,
-        string memory url,
-        string memory artist,
-        bool isForSale, uint256 price_)
+       uint8 royalties_, string memory title_, string memory author_,
+        string memory description_,
+        string memory uri_, bool forSell_ )
         public onlyOwner
         returns (uint256)
     {  
-       
+       require(royalties_ <= 50, "SRO721: royalties max amount is 50%");
         uint256 newNft = _tokenId.current();
+        uint256 timestamp = block.timestamp;
         _mint(msg.sender, newNft);
-        
-        _nft[newNft]= Nft({
-            textHashed : textHashed,
-            txt: txt,
-            title: title,
-            url : url,
-            artist : artist,
-            isForSale: isForSale
-        });
-        _setTokenURI(newNft, url);
-        Nft memory sale = Nft(textHashed,txt,title,url, artist, isForSale);
-        if(sale.isForSale == true){
-            _price[newNft] = price_;
-            list.push(sale);
-        }
-         _cprId[url] = newNft;
+        _nft[newNft]= Nft( msg.sender, royalties_, title_, author_, description_, timestamp, forSell_);
+        _setTokenURI(newNft, uri_);
          _tokenId.increment();
         return newNft;
     }
 
-    /// @dev Utilisation  
+
+
+  function listNFT(uint256 tokenId, uint256 price_) external {
+     _price[tokenId]  = price_;
+    Nft storage nftForSale = _nft[tokenId];
+    nftForSale.forSell = true;
+    list.push(nftForSale);
+  }
+function markAsSold(uint256 tokenId) public {
+    Nft storage nftForSale = list[tokenId];
+    nftForSale.forSell = false;
+  }
+
+    /// @dev Recupération data of a nft by his ID 
+
+    function getNMById(uint256 tokenId) public view returns (Nft memory) {
+        return _nft[tokenId];
+    }
+/// @dev Recupération data of a nft by the hash 
+   function getNMByURI(string memory uri) public view returns (uint256) {
+        return _cprId[uri];
+    }
+       function getNMByTitle(string memory title) public view returns (uint256) {
+        return _cprId[title];
+    }
+
+   function isForSell(uint256 tokenId) public view returns (bool) {
+        return _nft[tokenId].forSell;
+    }
+
+      function getPrice(uint256 tokenId) external view returns (uint) {
+   return (_price[tokenId]);
+  }
+
+        /// @dev Utilisation  
     /// @dev With this function, we have acces to the interface of a token */
       function supportsInterface(bytes4 interfaceId)
         public
@@ -88,19 +105,15 @@ contract NMToken is ERC721URIStorage, ERC721Enumerable,  Ownable {
     }
 
 
-  function getPrice(uint256 tokenId) external view returns (uint) {
-   return (_price[tokenId]);
-  }
-
-  function listNFT(uint256 tokenId) public {
-    Nft storage nftForSale = list[tokenId];
-    nftForSale.isForSale = true;
-  }
-
-function markAsSold(uint256 tokenId) public {
-    Nft storage nftForSale = list[tokenId];
-    nftForSale.isForSale = false;
-  }
+    function _baseURI()
+        internal
+        view
+        virtual
+        override(ERC721)
+        returns (string memory)
+    {
+        return "";
+    }
 
     function tokenURI(uint256 tokenId)
         public
@@ -112,25 +125,6 @@ function markAsSold(uint256 tokenId) public {
         return super.tokenURI(tokenId);
     }
 
-    /// @dev Recupération data of a nft by his ID 
-
-    function getNMById(uint256 tokenId) public view returns (Nft memory) {
-        return _nft[tokenId];
-    }
-/// @dev Recupération data of a nft by the hash 
-   function getNMByHash(string memory textHashed) public view returns (uint256 ) {
-        return _cprId[textHashed];
-    }
-
-    function _baseURI()
-        internal
-        view
-        virtual
-        override(ERC721)
-        returns (string memory)
-    {
-        return "";
-    }
 
     function _beforeTokenTransfer(address from, address to, uint256 tokenId)
         internal virtual override (ERC721, ERC721Enumerable)  {
