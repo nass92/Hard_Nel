@@ -61,7 +61,10 @@ describe('NelsonTest', function () {
       await nm.connect(deployer).certify('0x4b0e2df202b433cb39d49fe68ebc16734426f4993fdc74b296464191fd51bdb9',
         'ewe', 'rara', 'ipfs.io/ipfs/QmaKPJRAPf9fij2epXWLuQrMGPVWEbK4Fv7RDLwGZcFS3N', 'artist', true, 100);
     });
-
+it('Should return the price of the nft', async function() {
+  const nft = await nm.connect(deployer).getPrice(0);
+  expect(nft).to.equal(100)
+}) 
     it('Should return the NFT assossiated with the id', async function () {
       const nft = await nm.connect(deployer).getNMById(0);
       expect('0x4b0e2df202b433cb39d49fe68ebc16734426f4993fdc74b296464191fd51bdb9').to.equal(nft.textHashed);
@@ -108,7 +111,7 @@ describe('MarketTest', function () {
       }
     });
     it('buy nft', async () =>{
-        await mp.connect(deployer).buyNFT(0, { value: 200 });
+        await mp.connect(deployer).buyNFT(0, {from: artiste.address, value: 200 });
       expect(await nm.balanceOf(artiste.address)).to.equal(1);
     })
     
