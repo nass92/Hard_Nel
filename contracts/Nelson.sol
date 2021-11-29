@@ -13,11 +13,10 @@ contract NMToken is ERC721, ERC721URIStorage, ERC721Enumerable,  Ownable {
     using Address for address payable; 
    
  Counters.Counter private _tokenId;
-    Nft[] public list;
+    
 
     struct Nft {
         address authore;
-        uint8 royalties;
         string title;
         string author;
        string  description;
@@ -43,17 +42,16 @@ contract NMToken is ERC721, ERC721URIStorage, ERC721Enumerable,  Ownable {
     /// @dev increment balance[owner], number of id, and total supply.
     
     function certify(
-       uint8 royalties_, string memory title_, string memory author_,
+       string memory title_, string memory author_,
         string memory description_,
         string memory uri_, bool forSell_ )
         public onlyOwner
         returns (uint256)
     {  
-       require(royalties_ <= 50, "SRO721: royalties max amount is 50%");
         uint256 newNft = _tokenId.current();
         uint256 timestamp = block.timestamp;
         _mint(msg.sender, newNft);
-        _nft[newNft]= Nft( msg.sender, royalties_, title_, author_, description_, uri_, timestamp, forSell_);
+        _nft[newNft]= Nft( msg.sender, title_, author_, description_, uri_, timestamp, forSell_);
         _setTokenURI(newNft, uri_);
          _tokenId.increment();
         return newNft;
@@ -65,7 +63,6 @@ contract NMToken is ERC721, ERC721URIStorage, ERC721Enumerable,  Ownable {
      _price[tokenId]  = price_;
     Nft storage nftForSale = _nft[tokenId];
     nftForSale.forSell = true;
-    list.push(nftForSale);
   }
 function markAsSold(uint256 tokenId) public {
     Nft storage nftForSale = _nft[tokenId];
