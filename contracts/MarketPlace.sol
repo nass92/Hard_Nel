@@ -1,3 +1,4 @@
+// contracts/GameItem.sol
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
@@ -20,11 +21,19 @@ contract MarketPlace {
         uint256 price = _nmtoken.getPrice(tokenId);
         
         require(_nmtoken.getApproved(tokenId) == address(this),"SacemEnPLS: Sorry this NFT is not for sell");
+<<<<<<< HEAD
         require(msg.value >= price, " NMToken : Sorry not enought ethers" );
         require(_nmtoken.isForSell(tokenId) == true, "ee");
         
         address seller = _nmtoken.ownerOf(tokenId);
         //payable(seller).transfer(msg.value);
+=======
+        require(msg.value == price, " NMToken : Sorry not enought ethers" );
+        require(_nmtoken.isForSell(tokenId) == true, "ee");
+        
+        address seller = _nmtoken.ownerOf(tokenId);
+        payable(seller).transfer(msg.value);
+>>>>>>> 7947c83e2af2560c786b28170577698e9ed38b43
         _nmtoken.transferFrom(seller, msg.sender, tokenId);
         _nmtoken.markAsSold(tokenId);
     }
@@ -40,3 +49,4 @@ contract MarketPlace {
     }
 
 }
+
